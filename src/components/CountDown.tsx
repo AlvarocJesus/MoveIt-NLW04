@@ -1,44 +1,21 @@
 import { useState, useEffect, useContext } from 'react';
 import { ChallengesContext } from '../contexts/ChallengesContext';
+import { CountdownContext } from '../contexts/CountdownContext';
 
 import styles from '../styles/components/CountDown.module.css';
 
-let countDownTimeout: NodeJS.Timeout;
-
 export function CountDown(){
-  const { StartNewChallenge } = useContext(ChallengesContext);
-
-  const [time, setTime] = useState(25 * 60);
-  const [isActive, setIsactive] = useState(false);
-  const [hasFinished, setHasFinished] = useState(false);
-
-  const minutos = Math.floor(time / 60);
-  const seconds = time % 60;
+  const { 
+    minutos,
+    seconds,
+    hasFinished,
+    isActive,
+    resetCountdown,
+    startCountdown
+  } = useContext(CountdownContext);
 
   const [minuteLeft, minuteRight] = String(minutos).padStart(2, '0').split('');
   const [secondsLeft, secondsRight] = String(seconds).padStart(2, '0').split('');
-
-  function startCountDown(){
-    setIsactive(true);
-  }
-
-  function resetCountDown(){
-    clearTimeout(countDownTimeout);
-    setIsactive(false);
-    setTime(25*60);
-  }
-
-  useEffect(() => {
-    if(isActive && time > 0){
-      countDownTimeout = setTimeout(() => {
-        setTime(time - 1);
-      }, 1000)
-    } else if(isActive && time === 0){
-      setHasFinished(true);
-      setIsactive(false);
-      StartNewChallenge();
-    }
-  }, [isActive, time])
 
   return(
     <div>
@@ -67,7 +44,7 @@ export function CountDown(){
             <button
               type="button"
               className={`${styles.countDownButton} ${styles.countDownButtonActive}`}
-              onClick={resetCountDown}
+              onClick={resetCountdown}
             >
               Abandonar ciclo
             </button>
@@ -75,7 +52,7 @@ export function CountDown(){
             <button
               type="button"
               className={styles.countDownButton}
-              onClick={startCountDown}
+              onClick={startCountdown}
             >
               Iniciar um ciclo
             </button>
